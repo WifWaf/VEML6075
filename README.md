@@ -9,6 +9,7 @@ The ESP32 experiences difficulties with current available libraries due to the w
 NOTE: This has not been tested in conjunction with the Wire.h library, therefore changes might be required to the I2C setup (see VEML6075.cpp).
 
 ### Features
+---
 * Pass a custom configuration
 * Software "force mode" for individual reading control
 
@@ -23,6 +24,7 @@ The library will be found in the IDE/IO library manager. Alternatively, simply c
 If you are having difficulties, please raise an issue.
 
 ### "A Bit About the Sensor"
+---
 VEML67057 is a true UVA/UVB sensor. 
 
 This library uses the coefficients for sunlight and therefore will not provide accurate (and often out of range - shown as "-1") readings for LED lighting etc. To do this, calculations must be made as per the datasheets (see extras).
