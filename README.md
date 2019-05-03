@@ -23,7 +23,7 @@ The library will be found in the IDE/IO library manager. Alternatively, simply c
 
 If you are having difficulties, please raise an issue.
 
-### "A Bit About the Sensor"
+### A Bit About the Sensor
 ---
 VEML67057 is a true UVA/UVB sensor. 
 
