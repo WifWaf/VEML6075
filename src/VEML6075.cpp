@@ -1,11 +1,12 @@
-/***************************************************   
+/*************************************************** 
+  ESP32 Arduino library for the VEML6075
+  
   Author: Jonathan Dempsey JDWifWaf@gmail.com
   
   Version: 1.0.0
 
   License: Apache 2.0
-  
-   ESP32 Arduino library for the VEML6075
+
  ****************************************************/
 
 #include "VEML6075.h"

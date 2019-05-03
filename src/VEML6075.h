@@ -6,6 +6,7 @@
   License: Apache 2.0
 
   ESP32 Arduino library for the VEML6075
+
  ****************************************************/
 
 #ifndef _VEML6075_H
@@ -16,7 +17,7 @@
 /* Default Address used if not specified with constructor */
 #define VEML6075_ADDR 0x10 
 
-/* UV_Config Register */
+/*UV_Config Register -------------------------------------------*/
 #define UV_CONF_HD_NORM   (0x00)
 #define UV_CONF_HD_HIGH   (0x08)
 #define UV_CONF_TRIG_ON   (0x04)
@@ -33,6 +34,7 @@
 #define UV_CONF_T_800MS (0x40)
 #define UV_CONF_T_MASK  (0x8F)
 
+/* Variables --------------------------------------------------*/
 /* enum defintions for intergration times */
 typedef enum
 {
@@ -44,7 +46,7 @@ typedef enum
   MASK = UV_CONF_T_MASK, 
 } vml_IntegrationTime;
 
-/* Config structure for custom configuration, defaults are loaded*/
+/* Config structure for custom configuration, defaults are loaded */
 typedef struct 
 {
   uint8_t shutdown = UV_CONF_SD_OFF;
@@ -54,6 +56,7 @@ typedef struct
   uint8_t int_time = UV_CONF_T_100MS; 
 } vml_Config;
 
+/* Class -------------------------------------------------------*/
 class VEML6075
 {
   public:
@@ -91,7 +94,7 @@ class VEML6075
     vml_Config settings;    
     gpio_num_t _sda, _sdl;
 
-    unsigned int readings[6]; // Follows enum convention        
+    unsigned int readings[6]; // Index follows enum convention        
     uint8_t config = 0;
     uint8_t _addr;
     bool wasConfigured = false;
