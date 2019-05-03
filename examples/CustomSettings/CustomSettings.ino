@@ -11,7 +11,7 @@ VEML6075 VML(0x10);             // Address here is optional, default is shown
 
 void setup() 
 {
-    VML.begin(SDAPIN, SCLPIN);             // Pass your I2C numbers to the constructor
+    VML.begin(SDAPIN, SCLPIN);             // Pass your I2C numbers
 
     vml_Config myConfig;                   // Create instance of vml_config
     myConfig.shutdown = UV_CONF_SD_OFF;    // Set the vml_config variables, options/defintions are shown in the header file
