@@ -17,7 +17,7 @@ NOTE: This has not been tested in conjunction with the Wire.h library, therefore
 ---
 Contains all available commands as per the datasheet.
 
-### "Usage"
+### Usage
 ---
 The library will be found in the IDE/IO library manager. Alternatively, simply clone this library to your working library folder and include "VEML6075.h" in your main sketch.
 
