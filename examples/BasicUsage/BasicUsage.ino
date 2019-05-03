@@ -10,7 +10,7 @@ VEML6075 VML(0x10);             // Address here is optional, default is shown
 
 void setup() 
 {
-    VML.begin(SDAPIN, SCLPIN);  // Pass your I2C numbers to the constructor
+    VML.begin(SDAPIN, SCLPIN);  // Pass your I2C numbers
 }
 
 void loop() 
