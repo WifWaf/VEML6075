@@ -1,9 +1,9 @@
-﻿![Version](https://img.shields.io/badge/Version-v1.0.1-green.svg)
+![Version](https://img.shields.io/badge/Version-v1.0.1-green.svg)
 
 # VEML6075 for ESP32
 
-A, Arduino VEML6075 library for specfically for ESP32 sensors. The ESP32 experiences difficulties with current available libraries due to the
-way Wire.h handles the communication. This library coordinates the communication requried for the sensor, overcoming the issue.
+An Arduino VEML6075 library for specifically for ESP32 sensors. The ESP32 experiences difficulties with current available libraries due to the
+way Wire.h handles the communication. This library coordinates the communication required for the sensor, overcoming the issue.
 
 NOTE: This has not been tested in conjunction with the Wire.h library, therefore changes might be required to the I2C setup (see VEML6075.cpp).
 
@@ -33,11 +33,11 @@ Myself, you can find my contact details below.
 
 ### License
 ---
-This project is licensed under Aapache 2.0 - see the LICENSE.md file for details
+This project is licensed under Apache 2.0 - see the LICENSE.md file for details
 
 ### Acknowledgments
 ----
-This library was originaly inspired by schizobovine's work! https://github.com/schizobovine/VEML6075;
+This library was originally inspired by schizobovine's work! https://github.com/schizobovine/VEML6075;
 
 ### Feedback
 ---
