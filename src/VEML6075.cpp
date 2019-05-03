@@ -3,7 +3,7 @@
   
   Author: Jonathan Dempsey JDWifWaf@gmail.com
   
-  Version: 1.0.0
+  Version: 1.0.1
 
   License: Apache 2.0
 
