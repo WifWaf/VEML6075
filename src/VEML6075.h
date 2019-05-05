@@ -1,18 +1,19 @@
 /*************************************************** 
   Author: Jonathan Dempsey JDWifWaf@gmail.com
   
-  Version: 1.0.1
+  Version: 1.0.2
 
   License: Apache 2.0
 
   ESP32 Arduino library for the VEML6075
 
  ****************************************************/
-
+ 
 #ifndef _VEML6075_H
 #define _VEML6075_H
 
 #include <Arduino.h>
+#include <Wire.h>
 
 /* Default Address used if not specified with constructor */
 #define VEML6075_ADDR 0x10 
@@ -60,9 +61,9 @@ typedef struct
 class VEML6075
 {
   public:
-    VEML6075(byte addr = VEML6075_ADDR);
+    VEML6075(byte addr = 0x10, TwoWire &inWire = Wire);
 
-    bool begin(gpio_num_t sda = GPIO_NUM_21, gpio_num_t sdl = GPIO_NUM_22, vml_IntegrationTime inTime = T_100MS);   
+    bool begin(uint8_t sda = 21, uint8_t sdl = 22, vml_Config *inConfig = NULL);   
 
     void setConfig(vml_Config *inConfig);
     void setIntegration(vml_IntegrationTime inTime);
@@ -79,7 +80,13 @@ class VEML6075
     unsigned int  getRawIRComp(bool force = true);
 
   private:
+    unsigned int readings[6]; // Index follows enum convention   
 
+    uint8_t config = 0;
+    byte _addr;
+
+    TwoWire* myWire;          // I2C stream reference
+    
     typedef enum 
     {
       DARK = 0,
@@ -92,14 +99,8 @@ class VEML6075
     } vml_CommandID; 
 
     vml_Config settings;    
-    gpio_num_t _sda, _sdl;
+    uint8_t _sda, _sdl;
 
-    unsigned int readings[6]; // Index follows enum convention        
-    uint8_t config = 0;
-    uint8_t _addr;
-    bool wasConfigured = false;
-
-    byte I2CSetup();
     void configure();    
 
     void requestReading(vml_CommandID alias);    

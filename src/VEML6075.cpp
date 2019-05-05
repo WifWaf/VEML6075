@@ -3,15 +3,14 @@
   
   Author: Jonathan Dempsey JDWifWaf@gmail.com
   
-  Version: 1.0.1
+  Version: 1.0.2
 
   License: Apache 2.0
 
  ****************************************************/
 
-#include "VEML6075.h"
+#include "VEML6075.h" 
 #include <esp32-hal-log.h>
-#include <driver/i2c.h>
 
 /*Enable/Disable Debug Prints -----------------------------------------*/
 #define DEBUG 0
@@ -48,21 +47,17 @@
 #define COM_IR   (0x0B)
 #define COM_ID   (0x0C)
 
-VEML6075::VEML6075(byte addr) : _addr(addr) {}; 
+VEML6075::VEML6075(byte addr, TwoWire &inWire) : _addr(addr), myWire(&inWire){}; 
 
-bool VEML6075::begin(gpio_num_t sda, gpio_num_t sdl, vml_IntegrationTime inTime)
+bool VEML6075::begin(uint8_t sda, uint8_t sdl, vml_Config *inConfig)
 {
   this->_sda = sda; 
   this->_sdl = sdl;
-
-  if(I2CSetup() != ESP_OK)
-    return false;
   
-  if(inTime != T_100MS)
-    this->settings.int_time = inTime;
+  myWire->begin(_sda, _sdl);
 
-  if(!wasConfigured)
-    configure();
+  if(inConfig)
+    setConfig(inConfig);
 
   return true;
 }
@@ -70,8 +65,6 @@ bool VEML6075::begin(gpio_num_t sda, gpio_num_t sdl, vml_IntegrationTime inTime)
 void VEML6075::setConfig(vml_Config *inConfig)
 {
   memcpy(&this->settings, inConfig, sizeof(this->settings));
-
-  this->wasConfigured = true;
 
   configure();
 }
@@ -232,30 +225,20 @@ float VEML6075::calculate(vml_CommandID alias, bool force)
 
 unsigned int VEML6075::read(uint8_t inCommand)
 {
-  uint8_t LByte, *pLByte, HByte, *pHByte;
-  pLByte = &LByte;
-  pHByte = &HByte;
+  uint8_t inBytes[2];
+
+  /* write */
+  this->myWire->beginTransmission(_addr);                                 // Start Communication  
+  this->myWire->write(inCommand);                                         // Write Command
+  this->myWire->endTransmission(false);                                   // do not send stop command
   
-  i2c_cmd_handle_t cmd = i2c_cmd_link_create();
-
-  ESP_ERROR_CHECK(i2c_master_start(cmd));
-
-  ESP_ERROR_CHECK(i2c_master_write_byte(cmd, (VEML6075_ADDR << 1) | I2C_MASTER_WRITE, ACK_CHECK_EN));
-  ESP_ERROR_CHECK(i2c_master_write_byte(cmd, inCommand, ACK_CHECK_EN));
- 
-  ESP_ERROR_CHECK(i2c_master_start(cmd));
-
-  ESP_ERROR_CHECK(i2c_master_write_byte(cmd, (VEML6075_ADDR << 1) | I2C_MASTER_READ, ACK_CHECK_EN));
-  ESP_ERROR_CHECK(i2c_master_read_byte(cmd, pLByte, I2C_MASTER_ACK));
-  ESP_ERROR_CHECK(i2c_master_read_byte(cmd, pHByte, I2C_MASTER_ACK));
-
-  ESP_ERROR_CHECK(i2c_master_stop(cmd));
-
-  ESP_ERROR_CHECK(i2c_master_cmd_begin(I2C_NUM, cmd, 1000 / portTICK_RATE_MS));
-
-  i2c_cmd_link_delete(cmd);
-
-  uint16_t ret = (HByte << 8) | LByte;
+  /* read */
+  this->myWire->requestFrom((uint8_t)_addr, (uint8_t)2, (uint8_t)1);      // request 2 bytes from sensor
+  inBytes[0] = myWire->read();                                            // read LSB byte
+  inBytes[1] = myWire->read();                                            // read MSB byte
+  
+  /* calculate */
+  uint16_t ret = (inBytes[1] << 8) | inBytes[0];                          // calculate as per datasheet
 
   #if DEBUG
   ESP_LOGD(TAG_VEM,"Reg %#03x  Low Byte %d  *pLowByte %d  High Byte %d  *pHByte %d  Return %d",inCommand, LByte, *pLByte, HByte, *pHByte, ret);
@@ -271,38 +254,15 @@ void VEML6075::write(uint8_t inCommand, uint8_t inByte)
   ESP_LOGD(TAG_VEM,"Writing to VEML6075");
   #endif
 
-  uint8_t LSB = (0xFF & (inByte >> 0)); // LSB
-  uint8_t MSB = (0xFF & (inByte >> 8)); // MSB
-
-  i2c_cmd_handle_t cmd = i2c_cmd_link_create();
-
-  ESP_ERROR_CHECK(i2c_master_start(cmd));
-
-  ESP_ERROR_CHECK(i2c_master_write_byte(cmd, (VEML6075_ADDR << 1) | I2C_MASTER_WRITE, ACK_CHECK_EN));
-  ESP_ERROR_CHECK(i2c_master_write_byte(cmd, inCommand, ACK_CHECK_EN));
-  ESP_ERROR_CHECK(i2c_master_write_byte(cmd, LSB, ACK_CHECK_EN));
-  ESP_ERROR_CHECK(i2c_master_write_byte(cmd, MSB, ACK_CHECK_EN));
-
-  ESP_ERROR_CHECK(i2c_master_stop(cmd));
-  ESP_ERROR_CHECK(i2c_master_cmd_begin(I2C_NUM, cmd, (1000 / portTICK_RATE_MS)));
-
-  i2c_cmd_link_delete(cmd);
-}
-
-byte VEML6075::I2CSetup()
-{ 
-  i2c_config_t conf;
-  conf.mode = I2C_MODE_MASTER;
-  conf.sda_io_num = _sda;
-  conf.sda_pullup_en = GPIO_PULLUP_DISABLE;
-  conf.scl_io_num = _sdl;
-  conf.scl_pullup_en = GPIO_PULLUP_DISABLE;
-  conf.master.clk_speed = I2C_MASTER_FREQ_HZ;  
-  i2c_param_config(I2C_NUM , &conf);
-
-  return i2c_driver_install(I2C_NUM, conf.mode,
-                            I2C_MASTER_RX_BUF_DISABLE,
-                            I2C_MASTER_TX_BUF_DISABLE, 0); 
+  uint8_t LSB = (0xFF & (inByte >> 0));            // Least Significant Byte
+  uint8_t MSB = (0xFF & (inByte >> 8));            // Most Significant Byte
+ 
+   /* write only */
+  this->myWire->beginTransmission(VEML6075_ADDR);
+  this->myWire->write(inCommand);
+  this->myWire->write(LSB);                        // Least Significant Byte
+  this->myWire->write(MSB);                        // Most Significant Byte
+  this->myWire->endTransmission();
 }
 
 void VEML6075::configure()

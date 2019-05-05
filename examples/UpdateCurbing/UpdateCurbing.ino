@@ -16,12 +16,12 @@ Default: True
 
 #include "VEML6075.h"
 
-#define SCLPIN GPIO_NUM_22 
-#define SDAPIN GPIO_NUM_21 
+#define SCLPIN 22 
+#define SDAPIN 21 
 
-VEML6075 VML(0x10); 
+VEML6075 VML;
 
-void setup() 
+void setup()
 {
     VML.begin(SDAPIN, SCLPIN);
 }
