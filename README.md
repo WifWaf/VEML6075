@@ -1,16 +1,15 @@
-![Version](https://img.shields.io/badge/Version-v1.0.1-green.svg)
+![Version](https://img.shields.io/badge/Version-v1.0.2-green.svg)
 
 # VEML6075 for ESP32
 
 An Arduino VEML6075 library for specifically the Espressif ESP32. 
 
-The ESP32 experiences difficulties with current available libraries due to the way Wire.h handles the communication. This library coordinates the communication required for the sensor, overcoming the issue.
-
-NOTE: This has not been tested in conjunction with the Wire.h library, therefore changes might be required to the I2C setup (see VEML6075.cpp).
+The ESP32 can run into difficulties with some libraries as the stop command is always sent. This library handles the communication correctly.
 
 ### Features
 ---
-* Pass a custom configuration
+* Optional TwoWire reference in constructor
+* Optional pass a custom configuration
 * Software "force mode" for individual reading control
 
 ### Commands
