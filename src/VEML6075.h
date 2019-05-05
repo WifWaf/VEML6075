@@ -69,15 +69,18 @@ class VEML6075
     void setIntegration(vml_IntegrationTime inTime);
     
     void update();
+    
     float getUVA(bool force = true);
     float getUVB(bool force = true);
     float getUVIndex(bool force = true);
-    unsigned int getID();
+    
     unsigned int  getRawUVA(bool force = true);
     unsigned int  getRawUVB(bool force = true);
     unsigned int  getRawDark(bool force = true);
-    unsigned int  getRawVisComp(bool force = true);
-    unsigned int  getRawIRComp(bool force = true);
+    unsigned int  getRawVis(bool force = true);
+    unsigned int  getRawIR(bool force = true);
+
+    unsigned int getID();
 
   private:
     unsigned int readings[6]; // Index follows enum convention   

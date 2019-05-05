@@ -108,7 +108,7 @@ unsigned int VEML6075::getRawDark(bool force)
   return this->readings[DARK];
 }
 
-unsigned int VEML6075::getRawVisComp(bool force)
+unsigned int VEML6075::getRawVis(bool force)
 {
   if(force)
     requestReading(VIS);
@@ -116,7 +116,7 @@ unsigned int VEML6075::getRawVisComp(bool force)
   return this->readings[VIS];
 }
 
-unsigned int VEML6075::getRawIRComp(bool force)
+unsigned int VEML6075::getRawIR(bool force)
 {
   if(force)
     requestReading(IR);
