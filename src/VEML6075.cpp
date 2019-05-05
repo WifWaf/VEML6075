@@ -233,7 +233,7 @@ unsigned int VEML6075::read(uint8_t inCommand)
   this->myWire->endTransmission(false);                                   // do not send stop command
   
   /* read */
-  this->myWire->requestFrom((uint8_t)_addr, (uint8_t)2, (uint8_t)1);      // request 2 bytes from sensor
+  this->myWire->requestFrom((uint16_t)_addr, (uint8_t)2, true);      // request 2 bytes from sensor
   inBytes[0] = myWire->read();                                            // read LSB byte
   inBytes[1] = myWire->read();                                            // read MSB byte
   
